@@ -74,6 +74,18 @@ add it from a Git repo or local path via the plugin menu.
 
 New sessions pick skills up at startup; run `/skills` (or type `$`) to confirm.
 
+### Sub-agents (no agent.toml needed)
+
+The review — and the optional repair — spawn sub-agents (a fresh-eye reviewer;
+for repair, a low-tier writer plus a mid-tier verifier). You do NOT author a
+custom-agent config for these: the orchestrator (which has the skill loaded)
+spawns each **ad hoc** with `spawn_agent`, setting `reasoning_effort` to the
+role's tier and handing it the criteria/spec inline. Pass **`fork_context=false`**
+— Codex `spawn_agent` defaults to forking the parent's full history, which
+re-pollutes the fresh eye the review depends on. Nothing beyond this skill needs
+installing (custom-agent config files cannot yet reference a skill portably, so
+ad-hoc spawning is the clean path).
+
 After install, in a normal turn, ask the assistant to review a skill or prompt — e.g.
 *"Run skill-prompt-review on `path/to/SKILL.md`."* It loads the criteria from
 `references/`, runs the deterministic linter, and reports.
@@ -122,6 +134,10 @@ After install, in a normal turn, ask the assistant to review a skill or prompt �
    and confirm the skill catches them and stays quiet on a clean control.
    `scripts/test_lint.py`, `scripts/test_score.py`, and `tests/test_lint_fixtures.py`
    are that check for the deterministic half.
+7. **Repair, optionally.** After the report, the caller may offer a tiered fix: spec the
+   FAILs as exact `old → new` replacements, apply them with a low-tier writer sub-agent,
+   verify with a mid-tier reviewer sub-agent, delete the throwaway spec, then re-review the
+   edited target — see `references/repair.md`.
 
 ## Report format
 
