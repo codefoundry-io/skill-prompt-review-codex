@@ -1,0 +1,5 @@
+interface:
+  display_name: "Skill Prompt Review"
+  short_description: "Reviews a SKILL.md or a prompt against vendor prompt-engineering best practices."
+policy:
+  allow_implicit_invocation: true
